@@ -223,7 +223,7 @@ export function ResumeForm() {
               <Button
                 variant="outline"
                 size="icon"
-                className="absolute top-2 m-2 right-2  border-black"
+                className="absolute top-0 m-0 right-2  border-black"
                 onClick={() => deleteEducationRecord(record.id)}
               >
                 <Trash2 className="h-4 w-4" />
@@ -294,7 +294,7 @@ export function ResumeForm() {
               <Button
                 variant="outline"
                 size="icon"
-                className="absolute top-2 right-2 border-black"
+                className="absolute top-0 m-0 right-2 border-black"
                 onClick={() => deleteExperienceRecord(record.id)}
               >
                 <Trash2 className="h-4 w-4" />
