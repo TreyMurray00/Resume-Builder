@@ -22,12 +22,12 @@ export default function Home() {
   }
   return (
     
-      <div className="flex flex-col sm:flex-row gap-8">
-        <div className="w-1/3  h-screen overflow-y-auto p-4 m-0 border border-r-black">
+      <div className="flex flex-col md:flex-row gap-4">
+        <div className="md:w-1/3  h-screen overflow-y-auto p-4 border border-gray-300">
           <ResumeForm />
           
         </div>
-        <div className="w-2/3 my-4 bg-slate-300 overflow-y-auto">
+        <div className="md:w-2/3 h-screen overflow-y-auto p-4 border border-gray-300">
           <PdfView/>
         </div>
         
