@@ -1,9 +1,22 @@
 import React from 'react'
+import { Document, Page, Text, StyleSheet } from '@react-pdf/renderer'
+import { Resume } from '../../Types/types'
 
-const pdf = () => {
+type PdfProps = {
+
+   resume: Resume
+}
+
+
+const Pdf = () => {
   return (
-    <div>pdf</div>
+    <Document>
+      <Page size="A4">
+        <Text>John Doe</Text>
+        <Text>Bob burger</Text>
+      </Page>
+    </Document>
   )
 }
 
-export default pdf
+export default Pdf

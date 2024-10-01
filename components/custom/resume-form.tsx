@@ -7,6 +7,9 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { ChevronDown, ChevronUp, Trash2, Plus } from "lucide-react"
+import useLocalStorage from "@/Hooks/LocalStorageHook"
+import { Resume } from "@/Types/types"
+import ResumeClass from "@/Types/ResumeClass"
 
 interface EducationRecord {
   id: number;
@@ -38,6 +41,8 @@ interface PersonalInfo {
   address: string;
   links: string[];
 }
+
+const resumeOject = new ResumeClass();
 
 export function ResumeForm() {
   const [openSections, setOpenSections] = useState({
