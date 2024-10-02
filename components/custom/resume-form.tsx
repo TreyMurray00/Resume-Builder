@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { ChevronDown, ChevronUp, Trash2, Plus } from "lucide-react"
 import useLocalStorage from "@/Hooks/LocalStorageHook"
 import { Education, Experience, Skill, PersonalInfo } from "@/Types/types"
-import ResumeClass from "@/Types/ResumeClass"
+
 
 export function ResumeForm() {
 
