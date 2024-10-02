@@ -8,43 +8,12 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { ChevronDown, ChevronUp, Trash2, Plus } from "lucide-react"
 import useLocalStorage from "@/Hooks/LocalStorageHook"
-import { Resume } from "@/Types/types"
+import { Education, Experience, Skill, PersonalInfo } from "@/Types/types"
 import ResumeClass from "@/Types/ResumeClass"
 
-interface EducationRecord {
-  id: number;
-  school: string;
-  degree: string;
-  details: string;
-  startYear: string;
-  endYear: string;
-}
-
-interface ExperienceRecord {
-  id: number;
-  company: string;
-  position: string;
-  details: string;
-  startDate: string;
-  endDate: string;
-}
-
-interface Skill {
-  id: number;
-  name: string;
-}
-
-interface PersonalInfo {
-  name: string;
-  email: string;
-  phone: string;
-  address: string;
-  links: string[];
-}
-
-const resumeOject = new ResumeClass();
-
 export function ResumeForm() {
+
+
   const [openSections, setOpenSections] = useState({
     personalInfo: true,
     education: false,
@@ -52,65 +21,50 @@ export function ResumeForm() {
     skills: false,
   })
 
-  const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
-    name: "",
-    email: "",
-    phone: "",
-    address: "",
-    links: [""],
-  })
-
-  const [educationRecords, setEducationRecords] = useState<EducationRecord[]>([
-    { id: 1, school: "", degree: "", details: "", startYear: "", endYear: "" }
-  ])
-
-  const [experienceRecords, setExperienceRecords] = useState<ExperienceRecord[]>([
-    { id: 1, company: "", position: "", details: "", startDate: "", endDate: "" }
-  ])
-
-  const [skills, setSkills] = useState<Skill[]>([
-    { id: 1, name: "" }
-  ])
+  const [experienceRecords, setExperienceRecords] = useLocalStorage<Experience[]>('experienceRecords', []);
+  const [skills, setSkills] = useLocalStorage<Skill[]>('skills', []);
+  const [educationRecords, setEducationRecords] = useLocalStorage<Education[]>('educationRecords', []);
+  const [personalInfo, setPersonalInfo] = useLocalStorage<PersonalInfo>('personalInfo', { name: "", email: "", phone: "", address: "", links: [] });
 
   const toggleSection = (section: keyof typeof openSections) => {
     setOpenSections(prev => ({ ...prev, [section]: !prev[section] }))
   }
 
   const updatePersonalInfo = (field: keyof PersonalInfo, value: string) => {
-    setPersonalInfo(prev => ({ ...prev, [field]: value }))
+      setPersonalInfo((prev: PersonalInfo) => ({ ...prev, [field]: value }))
   }
 
   const addLink = () => {
-    setPersonalInfo(prev => ({ ...prev, links: [...prev.links, ""] }))
+    setPersonalInfo((prev: PersonalInfo) => ({ ...prev, links: [...prev.links, ""] }))
   }
 
   const updateLink = (index: number, value: string) => {
-    setPersonalInfo(prev => ({
+    setPersonalInfo((prev: PersonalInfo) => ({
       ...prev,
       links: prev.links.map((link, i) => i === index ? value : link)
     }))
   }
 
   const removeLink = (index: number) => {
-    setPersonalInfo(prev => ({
+    setPersonalInfo((prev: PersonalInfo) => ({
       ...prev,
       links: prev.links.filter((_, i) => i !== index)
     }))
   }
 
   const addEducationRecord = () => {
-    setEducationRecords(prev => [
-      ...prev,
-      { id: Date.now(), school: "", degree: "", details: "", startYear: "", endYear: "" }
-    ])
-  }
+      setEducationRecords((prev: Education[]) => [
+        ...prev,
+        { id: Date.now(), institution: "", degree: "", details: "", start: "", end: "" }
+      ])
+    }
 
   const deleteEducationRecord = (id: number) => {
-    setEducationRecords(prev => prev.filter(record => record.id !== id))
+      setEducationRecords((prev: Education[]) => prev.filter(record => record.id !== id))
   }
 
-  const updateEducationRecord = (id: number, field: keyof EducationRecord, value: string) => {
-    setEducationRecords(prev =>
+  const updateEducationRecord = (id: number, field: keyof Education, value: string) => {
+    setEducationRecords((prev: Education[]) =>
       prev.map(record =>
         record.id === id ? { ...record, [field]: value } : record
       )
@@ -118,18 +72,18 @@ export function ResumeForm() {
   }
 
   const addExperienceRecord = () => {
-    setExperienceRecords(prev => [
+    setExperienceRecords((prev: Experience[]) => [
       ...prev,
-      { id: Date.now(), company: "", position: "", details: "", startDate: "", endDate: "" }
+      { id: Date.now(), company: "", position: "", details: "", startDate: "", endDate: "", start: "", end: "" }
     ])
   }
 
   const deleteExperienceRecord = (id: number) => {
-    setExperienceRecords(prev => prev.filter(record => record.id !== id))
+    setExperienceRecords((prev: Experience[]) => prev.filter(record => record.id !== id))
   }
 
-  const updateExperienceRecord = (id: number, field: keyof ExperienceRecord, value: string) => {
-    setExperienceRecords(prev =>
+  const updateExperienceRecord = (id: number, field: keyof Experience, value: string) => {
+    setExperienceRecords((prev: Experience[]) =>
       prev.map(record =>
         record.id === id ? { ...record, [field]: value } : record
       )
@@ -137,15 +91,15 @@ export function ResumeForm() {
   }
 
   const addSkill = () => {
-    setSkills(prev => [...prev, { id: Date.now(), name: "" }])
+    setSkills((prev: Skill[]) => [...prev, { id: Date.now(), name: "" }])
   }
 
   const deleteSkill = (id: number) => {
-    setSkills(prev => prev.filter(skill => skill.id !== id))
+    setSkills((prev: Skill[]) => prev.filter(skill => skill.id !== id))
   }
 
   const updateSkill = (id: number, name: string) => {
-    setSkills(prev =>
+    setSkills((prev: Skill[]) =>
       prev.map(skill =>
         skill.id === id ? { ...skill, name } : skill
       )
@@ -191,7 +145,7 @@ export function ResumeForm() {
             onChange={(e) => updatePersonalInfo('address', e.target.value)}
           />
           <Label>Links</Label>
-          {personalInfo.links.map((link, index) => (
+          {personalInfo.links.map((link: string, index: number) => (
             <div key={index} className="flex items-center space-x-2">
               <Input
                 className="border-black flex-grow"
@@ -363,7 +317,7 @@ export function ResumeForm() {
           {openSections.skills ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
         </CollapsibleTrigger>
         <CollapsibleContent className="p-2 space-y-2 ">
-          {skills.map((skill) => (
+          {skills.map((skill: Skill) => (
             <div key={skill.id} className="flex items-center space-x-2">
               <Input
                 className="border-black flex-grow"

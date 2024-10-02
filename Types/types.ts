@@ -8,6 +8,7 @@ type PersonalInfo = {
 }
 
 type Experience = {
+    id: number;
     company: string;
     position: string;
     start: string;
@@ -15,6 +16,7 @@ type Experience = {
 }
 
 type Education = {
+    id: number
     institution: string;
     degree: string;
     start: string;
@@ -22,12 +24,14 @@ type Education = {
 }
 
 type Projects = {
+    id: number;
     name: string;
     description: string;
     link: string;
 }
 
 type Certification = {
+    id: number
     name: string;
     issuer: string;
     date: string;
@@ -44,4 +48,9 @@ type Resume = {
     hobbies: string[];
 }
 
-export type { PersonalInfo, Experience, Education, Projects, Certification, Resume}
+type Skill = {
+    id: number;
+    name: string;
+}
+
+export type { PersonalInfo, Experience, Education, Projects, Certification, Resume, Skill}
