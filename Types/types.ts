@@ -31,13 +31,8 @@ type Project = {
     name: string;
     description: string;
     link: string;
-    technologies: Technology[];
 }
 
-type Technology = {
-    id: number;
-    name: string;
-}
 
 type Certification = {
     id: number

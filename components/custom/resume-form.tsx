@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { ChevronDown, ChevronUp, Trash2, Plus } from "lucide-react"
 import useLocalStorage from "@/Hooks/LocalStorageHook"
-import { Education, Experience, Skill, PersonalInfo, Project, Certification, Technology } from "@/Types/types"
+import { Education, Experience, Skill, PersonalInfo, Project, Certification } from "@/Types/types"
 
 export function ResumeForm() {
   const [openSections, setOpenSections] = useState({
@@ -117,7 +117,7 @@ export function ResumeForm() {
   const addProject = () => {
     setProjects((prev: Project[]) => [
       ...prev,
-      { id: Date.now(), name: "", description: "", technologies: [], link: "" }
+      { id: Date.now(), name: "", description: "",link: "" }
     ])
   }
 
@@ -429,14 +429,7 @@ export function ResumeForm() {
                 value={project.description}
                 onChange={(e) => updateProject(project.id, 'description', e.target.value)}
               />
-              <Label htmlFor={`projectTechnologies-${project.id}`}>Technologies Used</Label>
-              <Input
-                id={`projectTechnologies-${project.id}`}
-                className="border-black"
-                value={project.technologies.join(", ")}
-                onChange={(e) => updateProject(project.id, 'technologies', e.target.value)}
-                placeholder="e.g., React, Node.js, MongoDB"
-              />
+
               <Label htmlFor={`projectLink-${project.id}`}>Project Link</Label>
               <Input
                 id={`projectLink-${project.id}`}
