@@ -7,37 +7,8 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { ChevronDown, ChevronUp, Trash2, Plus } from "lucide-react"
-
-interface EducationRecord {
-  id: number;
-  school: string;
-  degree: string;
-  details: string;
-  startYear: string;
-  endYear: string;
-}
-
-interface ExperienceRecord {
-  id: number;
-  company: string;
-  position: string;
-  details: string;
-  startDate: string;
-  endDate: string;
-}
-
-interface Skill {
-  id: number;
-  name: string;
-}
-
-interface PersonalInfo {
-  name: string;
-  email: string;
-  phone: string;
-  address: string;
-  links: string[];
-}
+import useLocalStorage from "@/Hooks/LocalStorageHook"
+import { Education, Experience, Skill, PersonalInfo, Project, Certification } from "@/Types/types"
 
 export function ResumeForm() {
   const [openSections, setOpenSections] = useState({
@@ -45,67 +16,63 @@ export function ResumeForm() {
     education: false,
     experience: false,
     skills: false,
+    projects: false,
+    certifications: false,
   })
 
-  const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
-    name: "",
-    email: "",
-    phone: "",
-    address: "",
-    links: [""],
-  })
-
-  const [educationRecords, setEducationRecords] = useState<EducationRecord[]>([
-    { id: 1, school: "", degree: "", details: "", startYear: "", endYear: "" }
-  ])
-
-  const [experienceRecords, setExperienceRecords] = useState<ExperienceRecord[]>([
-    { id: 1, company: "", position: "", details: "", startDate: "", endDate: "" }
-  ])
-
-  const [skills, setSkills] = useState<Skill[]>([
-    { id: 1, name: "" }
-  ])
+  const [experienceRecords, setExperienceRecords] = useLocalStorage<Experience[]>('experienceRecords', []);
+  const [skills, setSkills] = useLocalStorage<Skill[]>('skills', []);
+  const [educationRecords, setEducationRecords] = useLocalStorage<Education[]>('educationRecords', []);
+  const [projects, setProjects] = useLocalStorage<Project[]>('projects', []);
+  const [certifications, setCertifications] = useLocalStorage<Certification[]>('certifications', []);
+  const [personalInfo, setPersonalInfo] = useLocalStorage<PersonalInfo>('personalInfo', { 
+    name: "", 
+    email: "", 
+    phone: "", 
+    address: "", 
+    links: [],
+    summary: ""
+  });
 
   const toggleSection = (section: keyof typeof openSections) => {
     setOpenSections(prev => ({ ...prev, [section]: !prev[section] }))
   }
 
   const updatePersonalInfo = (field: keyof PersonalInfo, value: string) => {
-    setPersonalInfo(prev => ({ ...prev, [field]: value }))
+    setPersonalInfo((prev: PersonalInfo) => ({ ...prev, [field]: value }))
   }
 
   const addLink = () => {
-    setPersonalInfo(prev => ({ ...prev, links: [...prev.links, ""] }))
+    setPersonalInfo((prev: PersonalInfo) => ({ ...prev, links: [...prev.links, ""] }))
   }
 
   const updateLink = (index: number, value: string) => {
-    setPersonalInfo(prev => ({
+    setPersonalInfo((prev: PersonalInfo) => ({
       ...prev,
       links: prev.links.map((link, i) => i === index ? value : link)
     }))
   }
 
   const removeLink = (index: number) => {
-    setPersonalInfo(prev => ({
+    setPersonalInfo((prev: PersonalInfo) => ({
       ...prev,
       links: prev.links.filter((_, i) => i !== index)
     }))
   }
 
   const addEducationRecord = () => {
-    setEducationRecords(prev => [
+    setEducationRecords((prev: Education[]) => [
       ...prev,
-      { id: Date.now(), school: "", degree: "", details: "", startYear: "", endYear: "" }
+      { id: Date.now(), institution: "", degree: "", details: "", start: "", end: "" }
     ])
   }
 
   const deleteEducationRecord = (id: number) => {
-    setEducationRecords(prev => prev.filter(record => record.id !== id))
+    setEducationRecords((prev: Education[]) => prev.filter(record => record.id !== id))
   }
 
-  const updateEducationRecord = (id: number, field: keyof EducationRecord, value: string) => {
-    setEducationRecords(prev =>
+  const updateEducationRecord = (id: number, field: keyof Education, value: string) => {
+    setEducationRecords((prev: Education[]) =>
       prev.map(record =>
         record.id === id ? { ...record, [field]: value } : record
       )
@@ -113,18 +80,18 @@ export function ResumeForm() {
   }
 
   const addExperienceRecord = () => {
-    setExperienceRecords(prev => [
+    setExperienceRecords((prev: Experience[]) => [
       ...prev,
-      { id: Date.now(), company: "", position: "", details: "", startDate: "", endDate: "" }
+      { id: Date.now(), company: "", position: "", details: "", startDate: "", endDate: "", start: "", end: "" }
     ])
   }
 
   const deleteExperienceRecord = (id: number) => {
-    setExperienceRecords(prev => prev.filter(record => record.id !== id))
+    setExperienceRecords((prev: Experience[]) => prev.filter(record => record.id !== id))
   }
 
-  const updateExperienceRecord = (id: number, field: keyof ExperienceRecord, value: string) => {
-    setExperienceRecords(prev =>
+  const updateExperienceRecord = (id: number, field: keyof Experience, value: string) => {
+    setExperienceRecords((prev: Experience[]) =>
       prev.map(record =>
         record.id === id ? { ...record, [field]: value } : record
       )
@@ -132,17 +99,55 @@ export function ResumeForm() {
   }
 
   const addSkill = () => {
-    setSkills(prev => [...prev, { id: Date.now(), name: "" }])
+    setSkills((prev: Skill[]) => [...prev, { id: Date.now(), name: "" }])
   }
 
   const deleteSkill = (id: number) => {
-    setSkills(prev => prev.filter(skill => skill.id !== id))
+    setSkills((prev: Skill[]) => prev.filter(skill => skill.id !== id))
   }
 
   const updateSkill = (id: number, name: string) => {
-    setSkills(prev =>
+    setSkills((prev: Skill[]) =>
       prev.map(skill =>
         skill.id === id ? { ...skill, name } : skill
+      )
+    )
+  }
+
+  const addProject = () => {
+    setProjects((prev: Project[]) => [
+      ...prev,
+      { id: Date.now(), name: "", description: "",link: "" }
+    ])
+  }
+
+  const deleteProject = (id: number) => {
+    setProjects((prev: Project[]) => prev.filter(project => project.id !== id))
+  }
+
+  const updateProject = (id: number, field: keyof Project, value: string) => {
+    setProjects((prev: Project[]) =>
+      prev.map(project =>
+        project.id === id ? { ...project, [field]: value } : project
+      )
+    )
+  }
+
+  const addCertification = () => {
+    setCertifications((prev: Certification[]) => [
+      ...prev,
+      { id: Date.now(), name: "", issuer: "", date: "", link: "" }
+    ])
+  }
+
+  const deleteCertification = (id: number) => {
+    setCertifications((prev: Certification[]) => prev.filter(cert => cert.id !== id))
+  }
+
+  const updateCertification = (id: number, field: keyof Certification, value: string) => {
+    setCertifications((prev: Certification[]) =>
+      prev.map(cert =>
+        cert.id === id ? { ...cert, [field]: value } : cert
       )
     )
   }
@@ -185,8 +190,16 @@ export function ResumeForm() {
             value={personalInfo.address}
             onChange={(e) => updatePersonalInfo('address', e.target.value)}
           />
+          <Label htmlFor="professionalSummary">Professional Summary</Label>
+          <Textarea
+            id="professionalSummary"
+            className="border-black"
+            value={personalInfo.summary}
+            onChange={(e) => updatePersonalInfo('summary', e.target.value)}
+            placeholder="Briefly describe your professional background and key skills"
+          />
           <Label>Links</Label>
-          {personalInfo.links.map((link, index) => (
+          {personalInfo.links.map((link: string, index: number) => (
             <div key={index} className="flex items-center space-x-2">
               <Input
                 className="border-black flex-grow"
@@ -233,8 +246,8 @@ export function ResumeForm() {
               <Input
                 id={`school-${record.id}`}
                 className="border-black"
-                value={record.school}
-                onChange={(e) => updateEducationRecord(record.id, 'school', e.target.value)}
+                value={record.institution}
+                onChange={(e) => updateEducationRecord(record.id, 'institution', e.target.value)}
               />
               <Label htmlFor={`degree-${record.id}`}>Degree</Label>
               <Input
@@ -259,8 +272,8 @@ export function ResumeForm() {
                     type="number"
                     className="border-black"
                     placeholder="YYYY"
-                    value={record.startYear}
-                    onChange={(e) => updateEducationRecord(record.id, 'startYear', e.target.value)}
+                    value={record.start}
+                    onChange={(e) => updateEducationRecord(record.id, 'start', e.target.value)}
                   />
                 </div>
                 <div className="flex-1">
@@ -270,8 +283,8 @@ export function ResumeForm() {
                     type="number"
                     className="border-black"
                     placeholder="YYYY"
-                    value={record.endYear}
-                    onChange={(e) => updateEducationRecord(record.id, 'endYear', e.target.value)}
+                    value={record.end}
+                    onChange={(e) => updateEducationRecord(record.id, 'end', e.target.value)}
                   />
                 </div>
               </div>
@@ -329,8 +342,8 @@ export function ResumeForm() {
                     id={`startDate-${record.id}`}
                     type="date"
                     className="border-black"
-                    value={record.startDate}
-                    onChange={(e) => updateExperienceRecord(record.id, 'startDate', e.target.value)}
+                    value={record.start}
+                    onChange={(e) => updateExperienceRecord(record.id, 'start', e.target.value)}
                   />
                 </div>
                 <div className="flex-1">
@@ -339,8 +352,8 @@ export function ResumeForm() {
                     id={`endDate-${record.id}`}
                     type="date"
                     className="border-black"
-                    value={record.endDate}
-                    onChange={(e) => updateExperienceRecord(record.id, 'endDate', e.target.value)}
+                    value={record.end}
+                    onChange={(e) => updateExperienceRecord(record.id, 'end', e.target.value)}
                   />
                 </div>
               </div>
@@ -358,7 +371,7 @@ export function ResumeForm() {
           {openSections.skills ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
         </CollapsibleTrigger>
         <CollapsibleContent className="p-2 space-y-2 ">
-          {skills.map((skill) => (
+          {skills.map((skill: Skill) => (
             <div key={skill.id} className="flex items-center space-x-2">
               <Input
                 className="border-black flex-grow"
@@ -380,6 +393,110 @@ export function ResumeForm() {
           <Button onClick={addSkill} className="w-full border-black">
             <Plus className="h-4 w-4 mr-2" />
             Add Skill
+          </Button>
+        </CollapsibleContent>
+      </Collapsible>
+
+      <Collapsible open={openSections.projects} onOpenChange={() => toggleSection('projects')}>
+        <CollapsibleTrigger className="flex items-center justify-between w-full p-2 rounded border border-black">
+          <span>Projects</span>
+          {openSections.projects ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+        </CollapsibleTrigger>
+        <CollapsibleContent className="p-2 space-y-4">
+          {projects.map((project) => (
+            <div key={project.id} className="space-y-2 p-2 rounded relative">
+              <Button
+                variant="outline"
+                size="icon"
+                className="absolute top-0 m-0 right-2 border-black"
+                onClick={() => deleteProject(project.id)}
+              >
+                <Trash2 className="h-4 w-4" />
+                <span className="sr-only">Delete project</span>
+              </Button>
+              <Label htmlFor={`projectName-${project.id}`}>Project Name</Label>
+              <Input
+                id={`projectName-${project.id}`}
+                className="border-black"
+                value={project.name}
+                onChange={(e) => updateProject(project.id, 'name', e.target.value)}
+              />
+              <Label htmlFor={`projectDescription-${project.id}`}>Description</Label>
+              <Textarea
+                id={`projectDescription-${project.id}`}
+                className="border-black"
+                placeholder="Describe your project"
+                value={project.description}
+                onChange={(e) => updateProject(project.id, 'description', e.target.value)}
+              />
+
+              <Label htmlFor={`projectLink-${project.id}`}>Project Link</Label>
+              <Input
+                id={`projectLink-${project.id}`}
+                className="border-black"
+                value={project.link}
+                onChange={(e) => updateProject(project.id, 'link', e.target.value)}
+                placeholder="https://"
+              />
+            </div>
+          ))}
+          <Button onClick={addProject} className="w-full border-black">
+            Add Project
+          </Button>
+        </CollapsibleContent>
+      </Collapsible>
+
+      <Collapsible open={openSections.certifications} onOpenChange={() => toggleSection('certifications')}>
+        <CollapsibleTrigger className="flex items-center justify-between w-full p-2 rounded border border-black">
+          <span>Certifications</span>
+          {openSections.certifications ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+        </CollapsibleTrigger>
+        <CollapsibleContent className="p-2 space-y-4">
+          {certifications.map((cert) => (
+            <div key={cert.id} className="space-y-2 p-2 rounded relative">
+              <Button
+                variant="outline"
+                size="icon"
+                className="absolute top-0 m-0 right-2 border-black"
+                onClick={() => deleteCertification(cert.id)}
+              >
+                <Trash2 className="h-4 w-4" />
+                <span className="sr-only">Delete certification</span>
+              </Button>
+              <Label htmlFor={`certName-${cert.id}`}>Certification Name</Label>
+              <Input
+                id={`certName-${cert.id}`}
+                className="border-black"
+                value={cert.name}
+                onChange={(e) => updateCertification(cert.id, 'name', e.target.value)}
+              />
+              <Label htmlFor={`certIssuer-${cert.id}`}>Issuing Organization</Label>
+              <Input
+                id={`certIssuer-${cert.id}`}
+                className="border-black"
+                value={cert.issuer}
+                onChange={(e) => updateCertification(cert.id, 'issuer', e.target.value)}
+              />
+              <Label htmlFor={`certDate-${cert.id}`}>Date Obtained</Label>
+              <Input
+                id={`certDate-${cert.id}`}
+                type="date"
+                className="border-black"
+                value={cert.date}
+                onChange={(e) => updateCertification(cert.id, 'date', e.target.value)}
+              />
+              <Label htmlFor={`certLink-${cert.id}`}>Certification Link</Label>
+              <Input
+                id={`certLink-${cert.id}`}
+                className="border-black"
+                value={cert.link}
+                onChange={(e) => updateCertification(cert.id, 'link', e.target.value)}
+                placeholder="https://"
+              />
+            </div>
+          ))}
+          <Button onClick={addCertification} className="w-full border-black">
+            Add Certification
           </Button>
         </CollapsibleContent>
       </Collapsible>

@@ -35,7 +35,7 @@ export default function RootLayout({
                 <h1 className="text-2xl font-bold">Resume Builder</h1>
               </div>
             </header>
-            <main className="container mx-auto px-4 py-8">{children}</main>
+            <main className="container mx-auto px-4 py-0">{children}</main>
           </div>
             </body>
     </html>
