@@ -10,15 +10,19 @@ type PersonalInfo = {
 type Experience = {
     company: string;
     position: string;
-    start: string;
-    end: string;
+    startDate: string;
+    endDate: string;  
+    responsibilities: string[];
+    location: string;
 }
 
 type Education = {
     institution: string;
     degree: string;
-    start: string;
-    end: string;
+    fieldOfStudy: string;   
+    startDate: string;
+    endDate: string;
+    location: string;
 }
 
 type Projects = {
@@ -30,10 +34,11 @@ type Projects = {
 type Certification = {
     name: string;
     issuer: string;
-    date: string;
+    date: string;  
 }
 
 type Resume = {
+    summary: string;
     personalInfo: PersonalInfo;
     experience: Experience[];
     education: Education[];
