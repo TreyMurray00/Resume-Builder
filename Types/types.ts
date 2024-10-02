@@ -5,10 +5,12 @@ type PersonalInfo = {
     phone: string;
     address: string;
     links: string[];
+    summary: string;
 }
 
 type Experience = {
     id: number;
+    details: string;
     company: string;
     position: string;
     start: string;
@@ -17,21 +19,29 @@ type Experience = {
 
 type Education = {
     id: number
+    details: string;
     institution: string;
     degree: string;
     start: string;
     end: string;
 }
 
-type Projects = {
+type Project = {
     id: number;
     name: string;
     description: string;
     link: string;
+    technologies: Technology[];
+}
+
+type Technology = {
+    id: number;
+    name: string;
 }
 
 type Certification = {
     id: number
+    link: string;
     name: string;
     issuer: string;
     date: string;
@@ -42,10 +52,10 @@ type Resume = {
     experience: Experience[];
     education: Education[];
     skills: string[];
-    projects: Projects[];
+    projects: Project[];
     certifications: Certification[];
-    languages: string[];
-    hobbies: string[];
+    // languages: string[];
+    // hobbies: string[];
 }
 
 type Skill = {
@@ -53,4 +63,4 @@ type Skill = {
     name: string;
 }
 
-export type { PersonalInfo, Experience, Education, Projects, Certification, Resume, Skill}
+export type { PersonalInfo, Experience, Education, Project, Certification, Resume, Skill, Technology}
