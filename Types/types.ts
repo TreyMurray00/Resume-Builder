@@ -14,20 +14,16 @@ type Experience = {
     company: string;
     position: string;
     startDate: string;
-    endDate: string;  
-    responsibilities: string[];
-    location: string;
+    endDate: string;     
 }
 
 type Education = {
     id: number
     details: string;
     institution: string;
-    degree: string;
-    fieldOfStudy: string;   
-    startDate: string;
-    endDate: string;
-    location: string;
+    degree: string;     
+    start: string;
+    end: string;   
 }
 
 type Project = {
@@ -46,16 +42,13 @@ type Certification = {
     date: string;  
 }
 
-type Resume = {
-    summary: string;
+type Resume = {    
     personalInfo: PersonalInfo;
     experience: Experience[];
     education: Education[];
     skills: string[];
     projects: Project[];
     certifications: Certification[];
-    // languages: string[];
-    // hobbies: string[];
 }
 
 type Skill = {
@@ -63,4 +56,4 @@ type Skill = {
     name: string;
 }
 
-export type { PersonalInfo, Experience, Education, Project, Certification, Resume, Skill, Technology}
+export type { PersonalInfo, Experience, Education, Project, Certification, Resume, Skill}
