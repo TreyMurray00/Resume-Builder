@@ -82,7 +82,7 @@ export function ResumeForm() {
   const addExperienceRecord = () => {
     setExperienceRecords((prev: Experience[]) => [
       ...prev,
-      { id: Date.now(), company: "", position: "", details: "", startDate: "", endDate: "", start: "", end: "" }
+      { id: Date.now(), company: "", position: "", details: "", startDate: "", endDate: ""}
     ])
   }
 
@@ -342,8 +342,8 @@ export function ResumeForm() {
                     id={`startDate-${record.id}`}
                     type="date"
                     className="border-black"
-                    value={record.start}
-                    onChange={(e) => updateExperienceRecord(record.id, 'start', e.target.value)}
+                    value={record.startDate}
+                    onChange={(e) => updateExperienceRecord(record.id, 'startDate', e.target.value)}
                   />
                 </div>
                 <div className="flex-1">
@@ -352,8 +352,8 @@ export function ResumeForm() {
                     id={`endDate-${record.id}`}
                     type="date"
                     className="border-black"
-                    value={record.end}
-                    onChange={(e) => updateExperienceRecord(record.id, 'end', e.target.value)}
+                    value={record.endDate}
+                    onChange={(e) => updateExperienceRecord(record.id, 'endDate', e.target.value)}
                   />
                 </div>
               </div>

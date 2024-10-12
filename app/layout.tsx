@@ -32,10 +32,10 @@ export default function RootLayout({
            <div className="min-h-screen bg-background">
             <header className="sticky top-0 z-10 w-full bg-background border-b">
               <div className="container mx-auto px-4 py-4">
-                <h1 className="text-2xl font-bold">Resume Builder</h1>
+                <h1 className="text-2xl font-bold text-center">Resume Builder</h1>
               </div>
             </header>
-            <main className="container mx-auto px-4 py-0">{children}</main>
+            <main className="mx-auto px-4 py-4">{children}</main>
           </div>
             </body>
     </html>
