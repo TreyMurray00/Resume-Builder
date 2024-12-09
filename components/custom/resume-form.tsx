@@ -1,14 +1,16 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useCallback } from "react"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
-import { ChevronDown, ChevronUp, Trash2, Plus } from "lucide-react"
+import { ChevronDown, ChevronUp, Trash2, Plus } from 'lucide-react'
 import useLocalStorage from "@/Hooks/LocalStorageHook"
 import { Education, Experience, Skill, PersonalInfo, Project, Certification } from "@/Types/types"
+import axios from 'axios'
+
 
 export function ResumeForm() {
   const [openSections, setOpenSections] = useState({
@@ -20,11 +22,11 @@ export function ResumeForm() {
     certifications: false,
   })
 
-  const [experienceRecords, setExperienceRecords] = useLocalStorage<Experience[]>('experienceRecords', []);
-  const [skills, setSkills] = useLocalStorage<Skill[]>('skills', []);
-  const [educationRecords, setEducationRecords] = useLocalStorage<Education[]>('educationRecords', []);
-  const [projects, setProjects] = useLocalStorage<Project[]>('projects', []);
-  const [certifications, setCertifications] = useLocalStorage<Certification[]>('certifications', []);
+  const [experienceRecords, setExperienceRecords] = useLocalStorage<Experience[]>('experienceRecords', [])
+  const [skills, setSkills] = useLocalStorage<Skill[]>('skills', [])
+  const [educationRecords, setEducationRecords] = useLocalStorage<Education[]>('educationRecords', [])
+  const [projects, setProjects] = useLocalStorage<Project[]>('projects', [])
+  const [certifications, setCertifications] = useLocalStorage<Certification[]>('certifications', [])
   const [personalInfo, setPersonalInfo] = useLocalStorage<PersonalInfo>('personalInfo', { 
     name: "", 
     email: "", 
@@ -32,128 +34,182 @@ export function ResumeForm() {
     address: "", 
     links: [],
     summary: ""
-  });
+  })
 
-  const toggleSection = (section: keyof typeof openSections) => {
+  const toggleSection = useCallback((section: keyof typeof openSections) => {
     setOpenSections(prev => ({ ...prev, [section]: !prev[section] }))
-  }
+  }, [])
 
-  const updatePersonalInfo = (field: keyof PersonalInfo, value: string) => {
+  const updatePersonalInfo = useCallback((field: keyof PersonalInfo, value: string) => {
     setPersonalInfo((prev: PersonalInfo) => ({ ...prev, [field]: value }))
-  }
+  }, [setPersonalInfo])
 
-  const addLink = () => {
+  const addLink = useCallback(() => {
     setPersonalInfo((prev: PersonalInfo) => ({ ...prev, links: [...prev.links, ""] }))
-  }
+  }, [setPersonalInfo])
 
-  const updateLink = (index: number, value: string) => {
+  const updateLink = useCallback((index: number, value: string) => {
     setPersonalInfo((prev: PersonalInfo) => ({
       ...prev,
       links: prev.links.map((link, i) => i === index ? value : link)
     }))
-  }
+  }, [setPersonalInfo])
 
-  const removeLink = (index: number) => {
+  const removeLink = useCallback((index: number) => {
     setPersonalInfo((prev: PersonalInfo) => ({
       ...prev,
       links: prev.links.filter((_, i) => i !== index)
     }))
-  }
+  }, [setPersonalInfo])
 
-  const addEducationRecord = () => {
+  const addEducationRecord = useCallback(() => {
     setEducationRecords((prev: Education[]) => [
       ...prev,
       { id: Date.now(), institution: "", degree: "", details: "", start: "", end: "" }
     ])
-  }
+  }, [setEducationRecords])
 
-  const deleteEducationRecord = (id: number) => {
+  const deleteEducationRecord = useCallback((id: number) => {
     setEducationRecords((prev: Education[]) => prev.filter(record => record.id !== id))
-  }
+  }, [setEducationRecords])
 
-  const updateEducationRecord = (id: number, field: keyof Education, value: string) => {
+  const updateEducationRecord = useCallback((id: number, field: keyof Education, value: string) => {
     setEducationRecords((prev: Education[]) =>
       prev.map(record =>
         record.id === id ? { ...record, [field]: value } : record
       )
     )
-  }
+  }, [setEducationRecords])
 
-  const addExperienceRecord = () => {
+  const addExperienceRecord = useCallback(() => {
     setExperienceRecords((prev: Experience[]) => [
       ...prev,
       { id: Date.now(), company: "", position: "", details: "", startDate: "", endDate: ""}
     ])
-  }
+  }, [setExperienceRecords])
 
-  const deleteExperienceRecord = (id: number) => {
+  const deleteExperienceRecord = useCallback((id: number) => {
     setExperienceRecords((prev: Experience[]) => prev.filter(record => record.id !== id))
-  }
+  }, [setExperienceRecords])
 
-  const updateExperienceRecord = (id: number, field: keyof Experience, value: string) => {
+  const updateExperienceRecord = useCallback((id: number, field: keyof Experience, value: string) => {
     setExperienceRecords((prev: Experience[]) =>
       prev.map(record =>
         record.id === id ? { ...record, [field]: value } : record
       )
     )
-  }
+  }, [setExperienceRecords])
 
-  const addSkill = () => {
+  const addSkill = useCallback(() => {
     setSkills((prev: Skill[]) => [...prev, { id: Date.now(), name: "" }])
-  }
+  }, [setSkills])
 
-  const deleteSkill = (id: number) => {
+  const deleteSkill = useCallback((id: number) => {
     setSkills((prev: Skill[]) => prev.filter(skill => skill.id !== id))
-  }
+  }, [setSkills])
 
-  const updateSkill = (id: number, name: string) => {
+  const updateSkill = useCallback((id: number, name: string) => {
     setSkills((prev: Skill[]) =>
       prev.map(skill =>
         skill.id === id ? { ...skill, name } : skill
       )
     )
-  }
+  }, [setSkills])
 
-  const addProject = () => {
+  const addProject = useCallback(() => {
     setProjects((prev: Project[]) => [
       ...prev,
-      { id: Date.now(), name: "", description: "",link: "" }
+      { id: Date.now(), name: "", description: "", link: "" }
     ])
-  }
+  }, [setProjects])
 
-  const deleteProject = (id: number) => {
+  const deleteProject = useCallback((id: number) => {
     setProjects((prev: Project[]) => prev.filter(project => project.id !== id))
-  }
+  }, [setProjects])
 
-  const updateProject = (id: number, field: keyof Project, value: string) => {
+  const updateProject = useCallback((id: number, field: keyof Project, value: string) => {
     setProjects((prev: Project[]) =>
       prev.map(project =>
         project.id === id ? { ...project, [field]: value } : project
       )
     )
-  }
+  }, [setProjects])
 
-  const addCertification = () => {
+  const addCertification = useCallback(() => {
     setCertifications((prev: Certification[]) => [
       ...prev,
       { id: Date.now(), name: "", issuer: "", date: "", link: "" }
     ])
-  }
+  }, [setCertifications])
 
-  const deleteCertification = (id: number) => {
+  const deleteCertification = useCallback((id: number) => {
     setCertifications((prev: Certification[]) => prev.filter(cert => cert.id !== id))
-  }
+  }, [setCertifications])
 
-  const updateCertification = (id: number, field: keyof Certification, value: string) => {
+  const updateCertification = useCallback((id: number, field: keyof Certification, value: string) => {
     setCertifications((prev: Certification[]) =>
       prev.map(cert =>
         cert.id === id ? { ...cert, [field]: value } : cert
       )
     )
-  }
+  }, [setCertifications])
+  
+  
+  const printData = useCallback(async () => {
+    console.log("printData function called"); // Debug log
+    try {
+      const data = {
+        "Education": educationRecords,
+        "Personal": personalInfo,
+        "Experience": experienceRecords,
+        "Projects": projects,
+        "Skills": skills,
+        "Certifications": certifications
+      }
+      
+      console.log("Data being sent:", JSON.stringify(data, null, 2)); // Debug log
+
+      const response = await axios.post("/api/generatepdf", data, {
+        timeout: 0,
+        responseType: 'blob'
+      })
+
+      console.log("Response received:", response); // Debug log
+
+      // Create a Blob from the PDF Stream
+      const file = new Blob([response.data], { type: 'application/pdf' })
+      
+      // Create a link element, use it to download the blob, then remove it
+      const fileURL = URL.createObjectURL(file)
+      const link = document.createElement('a')
+      link.href = fileURL
+      link.download = 'resume.pdf'
+      link.click()
+      URL.revokeObjectURL(fileURL)
+
+      console.log("PDF download initiated"); // Debug log
+    } catch (error: any) {
+      console.error("Error in printData function:", error);
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.error("Error data:", error.response.data);
+        console.error("Error status:", error.response.status);
+        console.error("Error headers:", error.response.headers);
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.error("No response received:", error.request);
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.error("Error message:", error.message);
+      }
+    }
+  }, [educationRecords, personalInfo, experienceRecords, projects, skills, certifications])
+
 
   return (
     <div className="space-y-4 overflow-y-auto">
+    <Button onClick={printData}>Generate PDF</Button>
       <Collapsible open={openSections.personalInfo} onOpenChange={() => toggleSection('personalInfo')}>
         <CollapsibleTrigger className="flex items-center justify-between w-full p-2 rounded border border-black">
           <span>Personal Information</span>
@@ -429,7 +485,6 @@ export function ResumeForm() {
                 value={project.description}
                 onChange={(e) => updateProject(project.id, 'description', e.target.value)}
               />
-
               <Label htmlFor={`projectLink-${project.id}`}>Project Link</Label>
               <Input
                 id={`projectLink-${project.id}`}

@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect } from 'react';
-import { Resume } from '../../Types/types';
 import useLocalStorage from '@/Hooks/LocalStorageHook';
 import { Education, Experience, Skill, PersonalInfo, Project, Certification } from "@/Types/types";
 import DownloadButton from '@/components/custom/download-button';
@@ -227,7 +226,7 @@ const ResumeTemplate: React.FC<ResumeTemplateProps> = ({ template }) => {
         {template === 'template2' && <Template2 />}
         {template === 'template3' && <Template3 />}
       </div>
-      <DownloadButton targetId="resume-container" />
+      {/* <DownloadButton targetId="resume-container" /> */}
     </div>
   );
 };
