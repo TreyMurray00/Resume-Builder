@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect } from "react"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -9,18 +9,26 @@ import { Button } from "@/components/ui/button"
 import { ChevronDown, ChevronUp, Trash2, Plus } from 'lucide-react'
 import useLocalStorage from "@/Hooks/LocalStorageHook"
 import { Education, Experience, Skill, PersonalInfo, Project, Certification } from "@/Types/types"
-import axios from 'axios'
+
+interface OpenSections {
+  personalInfo: boolean;
+  education: boolean;
+  experience: boolean;
+  skills: boolean;
+  projects: boolean;
+  certifications: boolean;
+}
 
 
 export function ResumeForm() {
-  const [openSections, setOpenSections] = useState({
+  const [openSections, setOpenSections] = useState<OpenSections>({
     personalInfo: true,
     education: false,
     experience: false,
     skills: false,
     projects: false,
     certifications: false,
-  })
+  });
 
   const [experienceRecords, setExperienceRecords] = useLocalStorage<Experience[]>('experienceRecords', [])
   const [skills, setSkills] = useLocalStorage<Skill[]>('skills', [])
@@ -36,9 +44,12 @@ export function ResumeForm() {
     summary: ""
   })
 
-  const toggleSection = useCallback((section: keyof typeof openSections) => {
-    setOpenSections(prev => ({ ...prev, [section]: !prev[section] }))
-  }, [])
+  const toggleSection = useCallback((section: keyof OpenSections) => {
+    setOpenSections((prev) => ({
+      ...prev,
+      [section]: !prev[section],
+    }));
+  }, []); 
 
   const updatePersonalInfo = useCallback((field: keyof PersonalInfo, value: string) => {
     setPersonalInfo((prev: PersonalInfo) => ({ ...prev, [field]: value }))
@@ -154,62 +165,9 @@ export function ResumeForm() {
     )
   }, [setCertifications])
   
-  
-  const printData = useCallback(async () => {
-    console.log("printData function called"); // Debug log
-    try {
-      const data = {
-        "Education": educationRecords,
-        "Personal": personalInfo,
-        "Experience": experienceRecords,
-        "Projects": projects,
-        "Skills": skills,
-        "Certifications": certifications
-      }
-      
-      console.log("Data being sent:", JSON.stringify(data, null, 2)); // Debug log
-
-      const response = await axios.post("/api/generatepdf", data, {
-        timeout: 0,
-        responseType: 'blob'
-      })
-
-      console.log("Response received:", response); // Debug log
-
-      // Create a Blob from the PDF Stream
-      const file = new Blob([response.data], { type: 'application/pdf' })
-      
-      // Create a link element, use it to download the blob, then remove it
-      const fileURL = URL.createObjectURL(file)
-      const link = document.createElement('a')
-      link.href = fileURL
-      link.download = 'resume.pdf'
-      link.click()
-      URL.revokeObjectURL(fileURL)
-
-      console.log("PDF download initiated"); // Debug log
-    } catch (error: any) {
-      console.error("Error in printData function:", error);
-      if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        console.error("Error data:", error.response.data);
-        console.error("Error status:", error.response.status);
-        console.error("Error headers:", error.response.headers);
-      } else if (error.request) {
-        // The request was made but no response was received
-        console.error("No response received:", error.request);
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        console.error("Error message:", error.message);
-      }
-    }
-  }, [educationRecords, personalInfo, experienceRecords, projects, skills, certifications])
-
-
   return (
     <div className="space-y-4 overflow-y-auto">
-    <Button onClick={printData}>Generate PDF</Button>
+    
       <Collapsible open={openSections.personalInfo} onOpenChange={() => toggleSection('personalInfo')}>
         <CollapsibleTrigger className="flex items-center justify-between w-full p-2 rounded border border-black">
           <span>Personal Information</span>
@@ -316,7 +274,7 @@ export function ResumeForm() {
               <Textarea
                 id={`educationDetails-${record.id}`}
                 className="border-black"
-                placeholder="Add any relevant details about your education"
+                placeholder="Add any relevant details about your education. Each detail should be on a new line."
                 value={record.details}
                 onChange={(e) => updateEducationRecord(record.id, 'details', e.target.value)}
               />

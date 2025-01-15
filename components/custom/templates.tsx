@@ -226,7 +226,7 @@ const ResumeTemplate: React.FC<ResumeTemplateProps> = ({ template }) => {
         {template === 'template2' && <Template2 />}
         {template === 'template3' && <Template3 />}
       </div>
-      {/* <DownloadButton targetId="resume-container" /> */}
+      <DownloadButton targetId="resume-container" />
     </div>
   );
 };

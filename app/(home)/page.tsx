@@ -1,6 +1,7 @@
 "use client"
 import { ResumeForm } from "@/components/custom/resume-form";
 import ResumeTemplate from "@/components/custom/templates";
+import Template1 from "@/components/custom/Resume Templates/Template1";
 
 export default function Home() {
 
@@ -18,7 +19,8 @@ export default function Home() {
             <MyDocument></MyDocument>
           </PDFViewer> */}
           <div className="md:w-2/3 h-screen w-full overflow-y-auto p-4  border border-gray-300 rounded-lg">
-              <ResumeTemplate  template="template3" />
+            <Template1 />
+              {/* <ResumeTemplate  template="template3" /> */}
           </div>
          
         
