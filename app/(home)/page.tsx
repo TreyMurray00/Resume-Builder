@@ -19,7 +19,7 @@ export default function Home() {
             <MyDocument></MyDocument>
           </PDFViewer> */}
           <div className="md:w-2/3 h-screen w-full overflow-y-auto p-4  border border-gray-300 rounded-lg">
-            <Template1 />
+            <Template1 className="rounded-lg shadow-lg p-8" />
               {/* <ResumeTemplate  template="template3" /> */}
           </div>
          

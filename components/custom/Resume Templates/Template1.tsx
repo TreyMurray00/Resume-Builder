@@ -3,11 +3,16 @@ import React from 'react'
 import { PersonalInfo, Project,Education,Skill, Experience, Certification } from '@/Types/types'
 import useLocalStorage from '@/Hooks/LocalStorageHook';
 import { Mail, MapPin, Linkedin, Phone } from 'lucide-react';
+import { cn } from '@/lib/utils';
+
+type Props = {
+
+  className ?: string
+
+}
 
 
-
-
-const Template1 = () => {
+const Template1 = ({className}: Props) => {
     const [personalInfo] = useLocalStorage<PersonalInfo>('personalInfo', { 
         name: "", 
         email: "", 
@@ -22,8 +27,10 @@ const Template1 = () => {
     const [projects] = useLocalStorage<Project[]>('projects', []);
     const [certifications] = useLocalStorage<Certification[]>('certifications', []);
   return (
-    <div className="min-h-screen bg-gray-100 p-6 flex items-center justify-center">
-      <div className="bg-white rounded-lg shadow-lg max-w-4xl w-full p-8">
+   
+    <div className="min-h-screen flex items-center justify-center">
+
+      <div className={cn("bg-white max-w-4xl w-full ",className)}>
         <section className="text-center mb-6">
           <h1 className="text-3xl font-bold text-gray-800">{personalInfo.name}</h1>
           <div className="flex items-center justify-center gap-4 mt-2 text-gray-600 flex-wrap">
