@@ -1,62 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import PDFDocument from 'pdfkit';
 import { Certification, Education, Experience, PersonalInfo, Project, Skill } from "@/Types/types";
 
-export async function POST(request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
-    const params = await request.json();
-    const personalInfo: PersonalInfo = params["Personal"];
-    const skills: Skill[] = params["Skills"];
-    const education: Education[] = params["Education"];
-    const projects: Project[] = params["Projects"];
-    const certifications: Certification[] = params["Certifications"];
-    const experience: Experience[] = params["Experience"];
-
-    const resume = {
-      personalInfo,
-      experience,
-      education,
-      projects,
-      skills,
-      certifications,
-    };
-
-    console.log("Generating PDF with data:", JSON.stringify(resume, null, 2));
-
-    const doc = new PDFDocument();
-    const chunks: Uint8Array[] = [];
-
-    doc.on('data', (chunk) => chunks.push(chunk));
-    doc.on('end', () => {
-      const result = Buffer.concat(chunks);
-      return new NextResponse(result, {
-        headers: {
-          'Content-Type': 'application/pdf',
-          'Content-Disposition': 'attachment; filename="resume.pdf"',
-        },
-      });
-    });
-
-    // Generate PDF content
-    generatePDF(doc, resume);
-
-    doc.end();
-
-    return new Promise((resolve) => {
-      doc.on('end', () => {
-        const result = Buffer.concat(chunks);
-        resolve(new NextResponse(result, {
-          headers: {
-            'Content-Type': 'application/pdf',
-            'Content-Disposition': 'attachment; filename="resume.pdf"',
-          },
-        }));
-      });
-    });
-
-  } catch (error) {
-    console.error("Error generating PDF:", error);
-    return NextResponse.json({ error: "Failed to generate PDF" }, { status: 500 });
+  }
+  catch (error) {
+    return NextResponse.error();
   }
 }
 

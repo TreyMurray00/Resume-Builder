@@ -8,7 +8,7 @@ const page = () => {
 
       <div className=" h-screen w-full p-4 justify-self-center ">
           {/* <ResumeTemplate  template="template3" /> */}
-          <Template1 />
+          <Template1  className='mt-0 pt-0'/>
       </div>
      
     
