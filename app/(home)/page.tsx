@@ -1,12 +1,15 @@
 "use client"
-import { ResumeForm } from "@/components/custom/resume-form";
+import { ResumeForm } from "@/components/custom/resume-form/ResumeForm";
 import ResumeTemplate from "@/components/custom/templates";
+import { ResumeProvider } from '@/context/ResumeContext'
 import Template1 from "@/components/custom/Resume Templates/Template1";
+import { PrintButton } from '@/components/custom/print-button'
 
 export default function Home() {
 
 
   return (
+    <ResumeProvider>
     <div className="flew flex-row">
       
         
@@ -19,6 +22,9 @@ export default function Home() {
         </div>
 
           <div className="md:w-2/3 h-screen w-full overflow-y-auto p-4  border border-gray-300 rounded-lg">
+            <div className="mb-4">
+              <PrintButton />
+            </div>
             <Template1 className="rounded-lg shadow-lg p-8" />
               {/* <ResumeTemplate  template="template3" /> */}
           </div>
@@ -27,6 +33,7 @@ export default function Home() {
         
       </div>
     </div>
+    </ResumeProvider>
   )
 }
 

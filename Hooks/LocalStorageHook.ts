@@ -110,74 +110,108 @@
 //   return [value, setStoredValue] as const;
 // }
 
-import { useEffect, useState, useCallback, useRef } from "react";
+// import { useEffect, useState, useCallback, useRef } from "react";
+
+// export default function useLocalStorage<T>(key: string, defaultValue: T) {
+//   const [value, setValue] = useState<T>(defaultValue);
+//   const [isClient, setIsClient] = useState(false);
+//   const valueRef = useRef<T>(defaultValue);
+
+//   useEffect(() => {
+//     setIsClient(true);
+//   }, []);
+
+//   useEffect(() => {
+//     if (isClient) {
+//       try {
+//         const item = window.localStorage.getItem(key);
+//         const parsedItem = item ? (JSON.parse(item) as T) : defaultValue;
+//         setValue(parsedItem);
+//         valueRef.current = parsedItem;
+//       } catch (error) {
+//         console.warn(`Error reading localStorage key "${key}":`, error);
+//         setValue(defaultValue);
+//         valueRef.current = defaultValue;
+//       }
+//     }
+//   }, [isClient, key, defaultValue]);
+
+//   const setStoredValue = useCallback((newValue: T | ((val: T) => T)) => {
+//     try {
+//       const valueToStore = newValue instanceof Function ? newValue(valueRef.current) : newValue;
+//       setValue(valueToStore);
+//       valueRef.current = valueToStore;
+//       if (typeof window !== "undefined") {
+//         window.localStorage.setItem(key, JSON.stringify(valueToStore));
+//         window.dispatchEvent(new Event("localstorage-update"));
+//       }
+//     } catch (error) {
+//       console.warn(`Error setting localStorage key "${key}":`, error);
+//     }
+//   }, [key]);
+
+//   useEffect(() => {
+//     const handleStorageChange = (e: StorageEvent) => {
+//       if (e.key === key && e.newValue !== JSON.stringify(valueRef.current)) {
+//         const newValue = e.newValue ? JSON.parse(e.newValue) : defaultValue;
+//         setValue(newValue);
+//         valueRef.current = newValue;
+//       }
+//     };
+
+//     const handleCustomStorageUpdate = () => {
+//       const storedValue = window.localStorage.getItem(key);
+//       const newValue = storedValue ? JSON.parse(storedValue) : defaultValue;
+//       if (JSON.stringify(newValue) !== JSON.stringify(valueRef.current)) {
+//         setValue(newValue);
+//         valueRef.current = newValue;
+//       }
+//     };
+
+//     if (isClient) {
+//       window.addEventListener("storage", handleStorageChange);
+//       window.addEventListener("localstorage-update", handleCustomStorageUpdate);
+
+//       return () => {
+//         window.removeEventListener("storage", handleStorageChange);
+//         window.removeEventListener("localstorage-update", handleCustomStorageUpdate);
+//       };
+//     }
+//   }, [isClient, key, defaultValue]);
+
+//   return [value, setStoredValue] as const;
+// }
+
+import { useState, useEffect } from "react";
 
 export default function useLocalStorage<T>(key: string, defaultValue: T) {
-  const [value, setValue] = useState<T>(defaultValue);
+  // Initialize state with a function to avoid unnecessary computation
+  const [state, setState] = useState<T>(() => defaultValue);
   const [isClient, setIsClient] = useState(false);
-  const valueRef = useRef<T>(defaultValue);
 
+  // Once mounted, set isClient to true and try to get stored value
   useEffect(() => {
     setIsClient(true);
-  }, []);
-
-  useEffect(() => {
-    if (isClient) {
-      try {
-        const item = window.localStorage.getItem(key);
-        const parsedItem = item ? (JSON.parse(item) as T) : defaultValue;
-        setValue(parsedItem);
-        valueRef.current = parsedItem;
-      } catch (error) {
-        console.warn(`Error reading localStorage key "${key}":`, error);
-        setValue(defaultValue);
-        valueRef.current = defaultValue;
-      }
-    }
-  }, [isClient, key, defaultValue]);
-
-  const setStoredValue = useCallback((newValue: T | ((val: T) => T)) => {
     try {
-      const valueToStore = newValue instanceof Function ? newValue(valueRef.current) : newValue;
-      setValue(valueToStore);
-      valueRef.current = valueToStore;
-      if (typeof window !== "undefined") {
-        window.localStorage.setItem(key, JSON.stringify(valueToStore));
-        window.dispatchEvent(new Event("localstorage-update"));
+      const item = window.localStorage.getItem(key);
+      if (item) {
+        setState(JSON.parse(item));
       }
     } catch (error) {
-      console.warn(`Error setting localStorage key "${key}":`, error);
+      console.warn(`Error reading localStorage key "${key}":`, error);
     }
   }, [key]);
 
+  // Only update localStorage when state changes and we're on the client
   useEffect(() => {
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === key && e.newValue !== JSON.stringify(valueRef.current)) {
-        const newValue = e.newValue ? JSON.parse(e.newValue) : defaultValue;
-        setValue(newValue);
-        valueRef.current = newValue;
-      }
-    };
-
-    const handleCustomStorageUpdate = () => {
-      const storedValue = window.localStorage.getItem(key);
-      const newValue = storedValue ? JSON.parse(storedValue) : defaultValue;
-      if (JSON.stringify(newValue) !== JSON.stringify(valueRef.current)) {
-        setValue(newValue);
-        valueRef.current = newValue;
-      }
-    };
-
     if (isClient) {
-      window.addEventListener("storage", handleStorageChange);
-      window.addEventListener("localstorage-update", handleCustomStorageUpdate);
-
-      return () => {
-        window.removeEventListener("storage", handleStorageChange);
-        window.removeEventListener("localstorage-update", handleCustomStorageUpdate);
-      };
+      try {
+        window.localStorage.setItem(key, JSON.stringify(state));
+      } catch (error) {
+        console.warn(`Error setting localStorage key "${key}":`, error);
+      }
     }
-  }, [isClient, key, defaultValue]);
+  }, [key, state, isClient]);
 
-  return [value, setStoredValue] as const;
+  return [state, setState] as const;
 }
